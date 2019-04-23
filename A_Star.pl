@@ -30,6 +30,7 @@ start_A_star( InitState, PathCost) :-
 
 
 search_A_star(Queue, ClosedSet, PathCost) :-
+	
 
 	fetch(Node, Queue, ClosedSet , RestQueue),
 
@@ -37,8 +38,7 @@ search_A_star(Queue, ClosedSet, PathCost) :-
 
 
 
-continue(node(State, Action, Parent, Cost, _ ) , _  ,  ClosedSet,
-							path_cost(Path, Cost) ) :-
+continue(node(State, Action, Parent, Cost, _ ) , _  ,  ClosedSet, path_cost(Path, Cost) ) :-
 
 	goal( State), ! ,
 
@@ -57,8 +57,7 @@ continue(Node, RestQueue, ClosedSet, Path)   :-
 
 
 
-fetch(node(State, Action,Parent, Cost, Score),
-			[node(State, Action,Parent, Cost, Score) |RestQueue],									         ClosedSet,  RestQueue) :-
+fetch(node(State, Action,Parent, Cost, Score), [node(State, Action,Parent, Cost, Score) |RestQueue], ClosedSet,  RestQueue) :-
 
 	\+ member(node(State, _ ,_  , _ , _ ) , ClosedSet),   ! .
 
@@ -74,16 +73,8 @@ fetch(Node, [ _ |RestQueue], ClosedSet, NewRest) :-
 expand(node(State, _ ,_ , Cost, _ ), NewNodes)  :-
 
 	findall(node(ChildState, Action, State, NewCost, ChildScore) ,
-			(succ(State, Action, StepCost, ChildState),
-			    score(ChildState, Cost, StepCost, NewCost, ChildScore) ) ,
-
+			(succ(State, Action, StepCost, ChildState), score(ChildState, Cost, StepCost, NewCost, ChildScore) ) ,
 											NewNodes).
-
-
-
-
-
-
 
 
 score(State, ParentCost, StepCost, Cost, FScore)  :-
@@ -95,7 +86,6 @@ score(State, ParentCost, StepCost, Cost, FScore)  :-
 	FScore is Cost + HScore .
 
 
-
 insert_new_nodes( [ ], Queue, Queue) .
 
 insert_new_nodes( [Node|RestNodes], Queue, NewQueue) :-
@@ -103,7 +93,6 @@ insert_new_nodes( [Node|RestNodes], Queue, NewQueue) :-
 	insert_p_queue(Node, Queue, Queue1),
 
 	insert_new_nodes( RestNodes, Queue1, NewQueue).
-
 
 
 insert_p_queue(Node,  [ ], [Node] )      :-    ! .
@@ -120,11 +109,6 @@ insert_p_queue(node(State, Action, Parent, Cost, FScore),
 
 insert_p_queue(node(State, Action, Parent, Cost, FScore),  Queue,
 				[node(State, Action, Parent, Cost, FScore)|Queue]).
-
-
-
-
-
 
 
 
