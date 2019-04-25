@@ -37,19 +37,18 @@ get_index(Index, IndexList) :-
 
 % wrapper dla get_node_by_index_proc
 	get_node_by_index(OutNode, Queue, ClosedSet, Index) :-
-		get_node_by_index_proc(OutNode, _, Queue, ClosedSet, Index, 1).
+		get_node_by_index_proc(OutNode, _, Queue, ClosedSet, Index).
 
 % procedura wczytująca do OutNode węzeł na zadanej przez indeks pozycji (nie wliczając węzłów nalezących do ClosedSet)
-get_node_by_index_proc(OutNode, node(State, Action,Parent, Cost, Score), [node(State, Action,Parent, Cost, Score) |Queue], ClosedSet, Index, Counter) :-
+get_node_by_index_proc(OutNode, node(State, Action,Parent, Cost, Score), [node(State, Action,Parent, Cost, Score) |Queue], ClosedSet, Index) :-
 	is_member(node(State, _ ,_  , _ , _ ) , ClosedSet),   !,
-	get_node_by_index_proc(OutNode, _, Queue, ClosedSet, Index, Counter).
+	get_node_by_index_proc(OutNode, _, Queue, ClosedSet, Index).
 
-get_node_by_index_proc(OutNode, _, [_|Queue], ClosedSet, Index, Counter) :-
-	Index > Counter, !,
-	NewCounter is Counter+1,
-	get_node_by_index_proc(OutNode, _, Queue, ClosedSet, Index, NewCounter).
+get_node_by_index_proc(Node, Node, [Node|Queue], ClosedSet, 1).
 
-get_node_by_index_proc(Node, Node, [Node|Queue], ClosedSet, Index, Index).
+get_node_by_index_proc(OutNode, _, [_|Queue], ClosedSet, Index) :-
+	NewCounter is Index-1,
+	get_node_by_index_proc(OutNode, _, Queue, ClosedSet, NewCounter).
 
 % zmodyfikowana procedura fetch
 new_fetch(Node, Queue, ClosedSet, N) :-
