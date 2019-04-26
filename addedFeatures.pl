@@ -1,5 +1,5 @@
 % pokazuje (co najwyżej) N pierwszych węzłów grafu stanów
-show_nodes(_, _, 0, 0) :- !.		 % ! -> w razie nawrotu koniec
+show_nodes(_, _, 0, 0) :- !.
 
 show_nodes([], _, N, N).
 
@@ -36,24 +36,25 @@ get_index(Index, IndexList) :-
 	is_member(Index, IndexList).
 
 % wrapper dla get_node_by_index_proc
-	get_node_by_index(OutNode, Queue, ClosedSet, Index) :-
-		get_node_by_index_proc(OutNode, _, Queue, ClosedSet, Index).
+get_node_by_index(OutNode, Queue, ClosedSet, Index, NewQueue) :-
+	get_node_by_index_proc(OutNode, _, Queue, ClosedSet, Index, NewQueue).
 
 % procedura wczytująca do OutNode węzeł na zadanej przez indeks pozycji (nie wliczając węzłów nalezących do ClosedSet)
-get_node_by_index_proc(OutNode, node(State, Action,Parent, Cost, Score), [node(State, Action,Parent, Cost, Score) |Queue], ClosedSet, Index) :-
+get_node_by_index_proc(OutNode, node(State, Action,Parent, Cost, Score), [node(State, Action,Parent, Cost, Score) |Queue], ClosedSet, Index, 
+	[node(State, Action,Parent, Cost, Score)|NewQueue]) :-
 	is_member(node(State, _ ,_  , _ , _ ) , ClosedSet),   !,
-	get_node_by_index_proc(OutNode, _, Queue, ClosedSet, Index).
+	get_node_by_index_proc(OutNode, _, Queue, ClosedSet, Index, NewQueue).
 
-get_node_by_index_proc(Node, Node, [Node|Queue], ClosedSet, 1).
+get_node_by_index_proc(Node, Node, [Node|Queue], ClosedSet, 1, Queue).
 
-get_node_by_index_proc(OutNode, _, [_|Queue], ClosedSet, Index) :-
+get_node_by_index_proc(OutNode, _, [Node|Queue], ClosedSet, Index, [Node|NewQueue]) :-
 	NewCounter is Index-1,
-	get_node_by_index_proc(OutNode, _, Queue, ClosedSet, NewCounter).
+	get_node_by_index_proc(OutNode, _, Queue, ClosedSet, NewCounter, NewQueue).
 
 % zmodyfikowana procedura fetch
-new_fetch(Node, Queue, ClosedSet, N) :-
+new_fetch(Node, Queue, ClosedSet, N, NewQueue) :-
 	show_nodes(Queue, ClosedSet, N, Rejected),
 	EligibleN is N-Rejected,
 	get_input_indexes(EligibleN, IndexList),
 	get_index(Index, IndexList),
-	get_node_by_index(Node, Queue, ClosedSet, Index).
+	get_node_by_index(Node, Queue, ClosedSet, Index, NewQueue).
