@@ -77,7 +77,6 @@ insert_p_queue(node(State, Action, Parent, Cost, FScore),
 			[node(State1, Action1, Parent1, Cost1, FScore1)|Rest1] )  :-
 
 	FScore >= FScore1,  ! ,
-
 	insert_p_queue(node(State, Action, Parent, Cost, FScore), RestQueue, Rest1).
 
 

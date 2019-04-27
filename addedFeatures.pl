@@ -1,5 +1,5 @@
 % pokazuje (co najwyżej) N pierwszych węzłów grafu stanów
-show_nodes(_, _, 0, 0) :- !.
+show_nodes(_, _, 0, 0) :- !.	% ! -> w razie nawrotu koniec (sytuacja, gdy N równe jest ilości węzłów nienależących do ClosedSet)
 
 show_nodes([], _, N, N).
 
@@ -24,7 +24,7 @@ get_input_indexes(N, IndexList) :-
 	get_index_list(0, N, IndexList).
 
 % pobiera listę indeksów od użytkownika
-get_index_list(N, N, []) :- !.			% ! -> w razie nawrotu koniec (niepowodzenie)
+get_index_list(N, N, []) :- !.			% ! -> w razie nawrotu koniec (sytuacja, gdy dla wszystkich pobranych węzłów dalsza część algorytmu zakończy się niepowodzeniem)
 
 get_index_list(CurrN, N, [X|IndexList]) :-
 	NextCurrN is CurrN+1,
