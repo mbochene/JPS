@@ -53,11 +53,13 @@ continue(Node, Queue, ClosedSet, N, NewStepCounter, StepLimit, Path)   :-
 	insert_new_nodes(NewNodes, Queue, NewQueue),
 	search_A_star(NewQueue, [Node | ClosedSet ], N, NewStepCounter, StepLimit, Path).
 
-
 expand(node(State, _ ,_ , Cost, _ ), NewNodes)  :-
-	findall(node(ChildState, Action, State, NewCost, ChildScore) ,
-			(succ(State, Action, StepCost, ChildState), score(ChildState, Cost, StepCost, NewCost, ChildScore) ) ,
-											NewNodes).
+	new_findall(State, Cost, NewNodes).
+
+%expand(node(State, _ ,_ , Cost, _ ), NewNodes)  :-
+%	findall(node(ChildState, Action, State, NewCost, ChildScore) ,
+%			(succ(State, Action, StepCost, ChildState), score(ChildState, Cost, StepCost, NewCost, ChildScore) ) ,
+%											NewNodes).
 
 score(State, ParentCost, StepCost, Cost, FScore)  :-
 	Cost is ParentCost + StepCost ,
@@ -94,3 +96,23 @@ del([X|R],X,R).
 del([Y|R],X,[Y|R1]) :-
 	X\=Y,
 	del(R,X,R1).
+
+% procedura zastępująca findall
+new_findall(State, Cost, _) :-
+		succ(State, Action, StepCost, ChildState),
+		score(ChildState, Cost, StepCost, NewCost, ChildScore),
+        assert(new_find_all( node(ChildState, Action, State, NewCost, ChildScore) )), % umieszczenie całego node w bazie
+        fail.
+
+new_findall(_, _, NewNodes) :-				% w przypadku gdy nie ma już więcej węzłów do dodania, należy umieścić dodane poprzez assert węzły w liście
+	assert(new_find_all( [] )),				% umieszczenie znaku poocniczego w bazie (osiągnięcie przez retract '[]' oznacza, że pobrano już wszystkie węzły)
+    collect_new_nodes(NewNodes).
+
+collect_new_nodes(List) :-
+    retract(new_find_all(Node)), !,			% "powstrzymanie" retract przy nawrotach (związanych z odmową zwiększenia limitu kroków)
+    collect_new_nodes_proc(Node, List).
+
+collect_new_nodes_proc([], []).				% w przypadku pobrania "[]" przez retract należy skończyć rekursuję
+
+collect_new_nodes_proc(Node, [Node|List]) :-
+    collect_new_nodes(List).
