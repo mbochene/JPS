@@ -1,5 +1,6 @@
 goal([pos(0,3/1), pos(1,1/3), pos(2,2/3), pos(3,3/3), pos(4,1/2), pos(5,2/2), pos(6,3/2), pos(7,1/1), pos(8,2/1)]).
 
+% procedura uzganiająca z drugim argumentem wartość funkcji heurystycznej dla danego stanu
 hScore([], 0).
 
 hScore([First|Rest], Score) :-
@@ -7,6 +8,7 @@ hScore([First|Rest], Score) :-
     hScore(Rest, RestScore),
     Score is OneScore + RestScore.
 
+% procedura uzgadniająca z drugim argumentem sumę wartości bezwzględnych różnic współrzędnych położenia klocka z współżędnymi docelowymi
 hScoreForOnePos(pos(Num,X/Y), Score) :-
     getGoalPosProc(Num, Xg, Yg),
     DiffX is Xg-X,
@@ -15,7 +17,7 @@ hScoreForOnePos(pos(Num,X/Y), Score) :-
 	abs(DiffY, AbsDiffY),
 	Score is AbsDiffX + AbsDiffY.
 
-
+% procedura uzgadniająca dwa ostatnie argumenty ze współrzędnymi docelowymi klocka o zadanym numerze 
 getGoalPosProc(Num, Xg, Yg) :-
     goal(GoalPos),
     getGoalPos(Num, GoalPos, Xg, Yg).
